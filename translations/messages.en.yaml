@@ -1,0 +1,18 @@
+feedback:
+    title: "Feedback"
+    no_records_found: "No records found"
+    Approve: "Approve"
+    Disapprove: "Disapprove"
+    show: "Show"
+    edit: "Edit"
+    Create_new: "Create new"
+
+Id: "Id"
+Name: "Name"
+Email: "Email"
+Message: "Message"
+CreatedAt: "CreatedAt"
+Approved: "Approved"
+actions: "Actions"
+Yes: "Yes"
+No: "No"

@@ -1,0 +1,170 @@
+{% extends 'equipement/index.html.twig' %}
+
+{% block body %}
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+    
+<div id='calendar'></div>
+ <div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Event Form</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="eventForm">
+           <div class="form-group">
+            <input type="hidden" id="equipmentIds" name="equipmentIds" value="">
+              <label for="startTime">Start Time</label>
+              <input type="datetime-local" class="form-control" id="startTime">
+              <div class="invalid-feedback" id="startTimeError"></div>
+            </div>
+            <div class="form-group">
+              <label for="endTime">End Time</label>
+              <input type="datetime-local" class="form-control" id="endTime">
+              <div class="invalid-feedback" id="endTimeError"></div>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Event</button>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+   document.addEventListener('DOMContentLoaded', function() {
+    const socket = new WebSocket('ws://127.0.0.1:8080');
+
+    socket.onopen = function() {
+        console.log('Connected to WebSocket server');
+      
+    };
+
+    socket.onmessage = function(event) {
+        // Handle incoming messages
+        const message = event.data;
+        console.log('Message from server:', message);
+        alert('New Reservation: ' + message);
+    };
+
+    socket.onclose = function() {
+        console.log('Disconnected from WebSocket server');
+    };
+
+    socket.onerror = function(error) {
+        console.error('WebSocket error:', error);
+    };
+      
+});
+
+
+       document.addEventListener('DOMContentLoaded', function() {
+      var calendarEl = document.getElementById('calendar');
+      var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        events: function(fetchInfo, successCallback, failureCallback) {
+            $.ajax({
+                url: '{{ path('app_reservation_list_front') }}',
+                type: 'GET',
+                data: {
+                    start: fetchInfo.startStr,  // Start of the visible date range
+                    end: fetchInfo.endStr       // End of the visible date range
+                },
+                success: function(data) {
+                    successCallback(data);  // Pass the fetched events to FullCalendar
+                },
+                error: function() {
+                    failureCallback();  // Handle errors
+                }
+            });
+        },
+        dateClick: function(info) {
+          var selectedDate = new Date(info.dateStr);
+          var currentDate = new Date();
+          var startTimeInput = document.getElementById('startTime');
+          startTimeInput.min = currentDate.toISOString().slice(0, 16); // Format as YYYY-MM-DDTHH:MM
+          startTimeInput.value = info.dateStr + 'T00:00';
+          document.getElementById('endTime').value = '';
+
+         
+          clearErrors();
+            var urlParams = new URLSearchParams(window.location.search);
+            var equipmentIds = urlParams.get('equipmentIds');
+            document.getElementById('equipmentIds').value = equipmentIds;
+
+          $('#eventModal').modal('show');
+        }
+      });
+      calendar.render();
+      
+       
+    });
+
+    function clearErrors() {
+      var errorElements = document.querySelectorAll('.invalid-feedback');
+      errorElements.forEach(function(element) {
+        element.textContent = '';
+      });
+    }
+
+    document.getElementById('eventForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+         console.log('Form submission prevented');
+    
+
+       var startTime = new Date(document.getElementById('startTime').value);
+      var endTime = new Date(document.getElementById('endTime').value);
+       console.log('Start Time:', startTime);
+    console.log('End Time:', endTime);
+       var hasErrors = false;
+
+       // Clear previous errors
+       clearErrors();
+
+    
+
+       if (endTime <= startTime) {
+         document.getElementById('endTimeError').textContent = 'End time must be after start time.';
+         hasErrors = true;
+       }
+
+       if (startTime < new Date(document.getElementById('startTime').min)) {
+         document.getElementById('startTimeError').textContent = 'Start time cannot be before the current date.';
+         hasErrors = true;
+       }
+
+   
+     if (!hasErrors) {
+            $.ajax({
+                url: '{{ path('app_reservation_create') }}',
+                type: 'POST',
+                data: {
+        startTime: startTime.toISOString(),  // Convert to ISO string
+        endTime: endTime.toISOString(),      // Convert to ISO string
+        equipmentIds: document.getElementById('equipmentIds').value,
+    },
+                success: function(data) {
+                    if (data.success) {
+                        alert('Event saved successfully!');
+                        // socket.send('New reservation created: ' + JSON.stringify(data));
+                        $('#eventModal').modal('hide');
+                        // Optionally, refresh the calendar or other UI components here
+                    } else {
+                        alert('An error occurred: ' + data.message);
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error('Error:', textStatus, errorThrown);
+                    alert('An error occurred while saving the event.');
+                }
+            });
+        }
+    });
+
+    </script>
+
+{% endblock %}

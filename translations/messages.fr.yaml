@@ -1,0 +1,18 @@
+feedback:
+    title: "Retour d'information"
+    no_records_found: "Aucun enregistrement trouvé"
+    Approve: "Approuver"
+    Disapprove: "Désapprouver"
+    show: "Afficher"
+    edit: "Modifier"
+    Create_new: "Créer nouveau"
+
+Id: "Id"
+Name: "Nom"
+Email: "Email"
+Message: "Message"
+CreatedAt: "Créé le"
+Approved: "Approuvé"
+actions: "Actions"
+Yes: "Oui"
+No: "Non"

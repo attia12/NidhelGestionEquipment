@@ -1,0 +1,52 @@
+{% extends 'backend.html.twig' %}
+
+{% block title %}Reservation {% endblock %}
+
+{% block body %}
+    <h1>Reservation</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>StartTime</th>
+                <th>EndTime</th>
+                <th>CreatedAt</th>
+                <th>UpdatedAt</th>
+                <th>Status</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for reservation in reservations %}
+            <tr>
+                <td>{{ reservation.id }}</td>
+                <td>{{ reservation.startTime ? reservation.startTime|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ reservation.endTime ? reservation.endTime|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ reservation.createdAt ? reservation.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ reservation.updatedAt ? reservation.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ reservation.status }}</td>
+                <td>
+                    <a href="{{ path('app_reservation_show', {'id': reservation.id}) }}">show</a>
+                    <a href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">edit</a>
+                   {% if reservation.status == 'Pending' %}
+                        <form action="{{ path('app_reservation_approve', {'id': reservation.id}) }}" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-success">Approve</button>
+                        </form>
+                    {% elseif reservation.status == 'Accepted' %}
+                        <form action="{{ path('app_reservation_disapprove', {'id': reservation.id}) }}" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-danger">Disapprove</button>
+                        </form>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_reservation_new') }}">Create new</a>
+{% endblock %}

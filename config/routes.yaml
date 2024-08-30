@@ -1,0 +1,10 @@
+#index:
+#    path: /
+#    controller: App\Controller\DefaultController::index
+app_feedback_index:
+    path: /{_locale}/feedback
+    controller: App\Controller\FeedbackController::index
+    defaults:
+        _locale: en
+    requirements:
+        _locale: en|fr

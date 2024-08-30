@@ -1,0 +1,210 @@
+
+   
+ {% extends 'equipement/index.html.twig' %}
+  {% block section %}
+ <section class="slider_section">
+    <div id="customCarousel1" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+            {% for item in equipment %}
+                <div class="carousel-item{% if loop.first %} active{% endif %}">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="detail-box">
+                                    <h1>
+                                        {{ item.name }}
+                                    </h1>
+                                    <p>
+                                        {{ item.description }}
+                                    </p>
+                                    <a href="#">
+                                        Read More
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="img-box">
+                                    <img src="{{ asset('uploads/' ~ item.image) }}" alt="{{ item.name }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="carousel-item active">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p>No equipment available.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="carousel_btn_box">
+            <a class="carousel-control-prev" href="#customCarousel1" role="button" data-slide="prev">
+                <i class="fa fa-angle-left" aria-hidden="true"></i>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#customCarousel1" role="button" data-slide="next">
+                <i class="fa fa-angle-right" aria-hidden="true"></i>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+     {%  endblock %}
+
+{% block equipment %}
+<style>
+.star_container {
+    display: flex;
+    direction: row-reverse;
+}
+
+.fa-star {
+    font-size: 24px;
+    color: #ddd; /* Inactive star color */
+}
+
+.fa-star.active {
+    color: gold; /* Active star color */
+}
+</style>
+  <section class="product_section layout_padding">
+    <div class="container">
+        <div class="heading_container heading_center">
+            <h2>Our Equipments</h2>
+        </div>
+        <div class="row">
+            {% for item in equipment %}
+                <div class="col-sm-6 col-lg-4">
+                    <div class="box" data-item-id="{{ item.id }}">
+                        <div class="img-box">
+                            <img src="{{ asset('uploads/' ~ item.image) }}" alt="{{ item.name }}">
+                            <a href="{{ path('cart_add', {id: item.id}) }}" class="add_cart_btn">
+                                <span>Add To Cart</span>
+                            </a>
+                        </div>
+                        <div class="detail-box">
+                            <h5>{{ item.name }}</h5>
+                            <div class="product_info">
+                                <h5>
+                                    <span>$</span> {{item.rating}}
+                                </h5>
+                                 <div class="star_container">
+                                    {% set rating = item.rating is defined ? item.rating : 0 %}
+                                    {% for i in 1..5 %}
+                                        <i class="fa fa-star{% if i <= rating %} active{% endif %}" data-star="{{ i }}" aria-hidden="true"></i>
+                                    {% endfor %}
+                                </div>
+                               
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <p>No available equipment at the moment.</p>
+            {% endfor %}
+        </div>
+        <div class="btn_box">
+            <a href="#" class="view_more-link">View More</a>
+        </div>
+    </div>
+</section>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.star_container .fa-star').forEach(function (star) {
+        star.addEventListener('click', function () {
+            var rating = this.getAttribute('data-star');
+            var itemId = this.closest('.box').getAttribute('data-item-id');
+
+            fetch('{{ path('equipment_rate', {id: 'ITEM_ID'}) }}'.replace('ITEM_ID', itemId), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ rating: rating })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                   
+                    // Update stars display
+                    document.querySelectorAll('.box[data-item-id="' + itemId + '"] .star_container .fa-star').forEach(function (s) {
+                        s.classList.toggle('active', s.getAttribute('data-star') <= rating);
+                    });
+                } 
+            });
+        });
+    });
+});
+</script>
+{% endblock %}
+{% block feedback %}
+
+<section class="client_section layout_padding-bottom">
+        <div class="container">
+            <div class="heading_container heading_center">
+                <h2>What Says Our Customers</h2>
+            </div>
+        </div>
+        <div class="client_container">
+            <div id="carouselExample2Controls" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner">
+                    {% for feedback in feedback %}
+                        <div class="carousel-item {% if loop.first %}active{% endif %}">
+                            <div class="container">
+                                <div class="box">
+                                    <div class="detail-box">
+                                        <p>
+                                            <i class="fa fa-quote-left" aria-hidden="true"></i>
+                                        </p>
+                                        <p>{{ feedback.message }}</p>
+                                    </div>
+                                    <div class="client-id">
+                                        <div class="img-box">
+                                            <img src="images/client.jpg" alt="">
+                                        </div>
+                                        <div class="name">
+                                            <h5>{{ feedback.name }}</h5>
+                                            <h6>Photographer</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="carousel-item active">
+                            <div class="container">
+                                <div class="box">
+                                    <div class="detail-box">
+                                        <p>No feedback available</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="carousel_btn-box">
+                    <a class="carousel-control-prev" href="#carouselExample2Controls" role="button" data-slide="prev">
+                        <span>
+                            <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        </span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#carouselExample2Controls" role="button" data-slide="next">
+                        <span>
+                            <i class="fa fa-angle-right" aria-hidden="true"></i>
+                        </span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

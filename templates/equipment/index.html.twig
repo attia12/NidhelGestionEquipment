@@ -1,0 +1,49 @@
+{% extends 'backend.html.twig' %}
+
+{% block title %}Equipment index{% endblock %}
+
+{% block body %}
+    <h1>Equipment </h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Image</th>
+                <th>AvailabilityStatus</th>
+                <th>CreatedAt</th>
+                <th>UpdatedAt</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for equipment in equipment %}
+            <tr>
+                <td>{{ equipment.id }}</td>
+                <td>{{ equipment.name }}</td>
+                <td>{{ equipment.description }}</td>
+                <td> {% if equipment.image %}
+                        <img src="{{ asset('uploads/' ~ equipment.image) }}" alt="{{ equipment.name }}" class="img-thumbnail" style="max-width: 100px; max-height: 100px;">
+                    {% else %}
+                        No image
+                    {% endif %}</td>
+                <td>{{ equipment.availabilityStatus }}</td>
+                <td>{{ equipment.createdAt ? equipment.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ equipment.updatedAt ? equipment.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_equipment_show', {'id': equipment.id}) }}">show</a>
+                    <a href="{{ path('app_equipment_edit', {'id': equipment.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_equipment_new') }}">Create new</a>
+{% endblock %}

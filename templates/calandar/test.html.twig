@@ -1,0 +1,38 @@
+{% extends 'equipement/index.html.twig' %}
+
+{% block body %}
+
+<h1> hello</h1>
+<button id="testNotificationButton">Send Test Notification</button>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const socket = new WebSocket('ws://127.0.0.1:8080');
+
+        socket.onopen = function() {
+            console.log('Connected to WebSocket server');
+        };
+
+        socket.onmessage = function(event) {
+            // Handle incoming messages
+            const message = event.data;
+            console.log('Message from server:', message);
+            alert('Message from server: ' + message);
+        };
+
+        socket.onclose = function() {
+            console.log('Disconnected from WebSocket server');
+        };
+
+        socket.onerror = function(error) {
+            console.error('WebSocket error:', error);
+        };
+
+        // Send a test message when the button is clicked
+        document.getElementById('testNotificationButton').addEventListener('click', function() {
+            const testMessage = 'Test notification message';
+            socket.send(testMessage);
+        });
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,108 @@
+{# {% extends 'backend.html.twig' %}
+
+{% block title %}Feedback {% endblock %}
+
+{% block body %}
+    <h1>Feedback </h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Message</th>
+                <th>CreatedAt</th>
+                <th>Approved</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for feedback in feedback %}
+            <tr>
+                <td>{{ feedback.id }}</td>
+                <td>{{ feedback.name }}</td>
+                <td>{{ feedback.email }}</td>
+                <td>{{ feedback.message }}</td>
+                <td>{{ feedback.createdAt ? feedback.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ feedback.approved ? 'Yes' : 'No' }}</td>
+                <td>
+                    <a href="{{ path('app_feedback_show', {'id': feedback.id}) }}">show</a>
+                    <a href="{{ path('app_feedback_edit', {'id': feedback.id}) }}">edit</a>
+                   {% if feedback.approved %}
+                        <form action="{{ path('app_feedback_disapprove', {'id': feedback.id}) }}" method="POST" style="display:inline;">
+                            
+                            <button type="submit" class="btn btn-warning">Disapprove</button>
+                        </form>
+                    {% else %}
+                        <form action="{{ path('app_feedback_approve', {'id': feedback.id}) }}" method="POST" style="display:inline;">
+                           
+                            <button type="submit" class="btn btn-success">Approve</button>
+                        </form>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_feedback_new') }}">Create new</a>
+{% endblock %} #}
+{# templates/feedback/index.html.twig #}
+{% extends 'backend.html.twig' %}
+
+{% block title %}{{ 'feedback.title'|trans }}{% endblock %}
+
+{% block body %}
+    <h1>{{ 'feedback.title'|trans }}</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>{{ 'Id'|trans }}</th>
+                <th>{{ 'Name'|trans }}</th>
+                <th>{{ 'Email'|trans }}</th>
+                <th>{{ 'Message'|trans }}</th>
+                <th>{{ 'CreatedAt'|trans }}</th>
+                <th>{{ 'Approved'|trans }}</th>
+                <th>{{ 'actions'|trans }}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for feedback in feedback %}
+            <tr>
+                <td>{{ feedback.id }}</td>
+                <td>{{ feedback.name }}</td>
+                <td>{{ feedback.email }}</td>
+                <td>{{ feedback.message }}</td>
+                <td>{{ feedback.createdAt ? feedback.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ feedback.approved ? 'Yes'|trans : 'No'|trans }}</td>
+                <td>
+                    <a href="{{ path('app_feedback_show', {'id': feedback.id}) }}">{{ 'show'|trans }}</a>
+                    <a href="{{ path('app_feedback_edit', {'id': feedback.id}) }}">{{ 'edit'|trans }}</a>
+                    {% if not feedback.approved %}
+                        <form action="{{ path('app_feedback_approve', {'id': feedback.id}) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-success">{{ 'Approve'|trans }}</button>
+                        </form>
+                    {% else %}
+                        <form action="{{ path('app_feedback_disapprove', {'id': feedback.id}) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-warning">{{ 'Disapprove'|trans }}</button>
+                        </form>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">{{ 'no_records_found'|trans }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_feedback_new') }}">{{ 'Create_new'|trans }}</a>
+{% endblock %}
+

@@ -1,0 +1,166 @@
+
+{% extends 'backend.html.twig' %}
+
+{% block body %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Feedback Count Card -->
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+            <div class="card">
+                <div class="card-body p-3">
+                    <div class="row">
+                        <div class="col-8">
+                            <div class="numbers">
+                                <p class="text-sm mb-0 text-capitalize font-weight-bold">Feedback Count</p>
+                                <h5 class="font-weight-bolder mb-0">
+                                    {{ feedbackCount }}
+                                </h5>
+                            </div>
+                        </div>
+                        <div class="col-4 text-end">
+                            <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
+                                <i class="ni ni-chat-round text-lg opacity-10" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reservation Count Card -->
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+            <div class="card">
+                <div class="card-body p-3">
+                    <div class="row">
+                        <div class="col-8">
+                            <div class="numbers">
+                                <p class="text-sm mb-0 text-capitalize font-weight-bold">Reservation Count</p>
+                                <h5 class="font-weight-bolder mb-0">
+                                    {{ reservationCount }}
+                                </h5>
+                            </div>
+                        </div>
+                        <div class="col-4 text-end">
+                            <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
+                                <i class="ni ni-calendar-grid-58 text-lg opacity-10" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Equipment Count Card -->
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+            <div class="card">
+                <div class="card-body p-3">
+                    <div class="row">
+                        <div class="col-8">
+                            <div class="numbers">
+                                <p class="text-sm mb-0 text-capitalize font-weight-bold">Equipment Count</p>
+                                <h5 class="font-weight-bolder mb-0">
+                                    {{ equipmentCount }}
+                                </h5>
+                            </div>
+                        </div>
+                        <div class="col-4 text-end">
+                            <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
+                                <i class="ni ni-box-2 text-lg opacity-10" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category Count Card -->
+        <div class="col-xl-3 col-sm-6">
+            <div class="card">
+                <div class="card-body p-3">
+                    <div class="row">
+                        <div class="col-8">
+                            <div class="numbers">
+                                <p class="text-sm mb-0 text-capitalize font-weight-bold">Category Count</p>
+                                <h5 class="font-weight-bolder mb-0">
+                                    {{ categoryCount }}
+                                </h5>
+                            </div>
+                        </div>
+                        <div class="col-4 text-end">
+                            <div class="icon icon-shape bg-gradient-primary shadow text-center border-radius-md">
+                                <i class="ni ni-tag text-lg opacity-10" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <!-- Monthly Feedback Trends Chart -->
+    <div class="col-md-6">
+        <p class="text-sm mb-0 text-capitalize font-weight-bold">Monthly Feedback Trends</p>
+        <canvas id="monthlyFeedbackChart"></canvas>
+    </div>
+
+    <!-- Bar Chart: Equipment by Category -->
+    <div class="col-xl-6 col-sm-12 mb-xl-0 mb-4">
+        <div class="card">
+            <div class="card-body p-3">
+                <p class="text-sm mb-0 text-capitalize font-weight-bold">Equipment by Category</p>
+                <canvas id="equipmentByCategoryChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Initialize Monthly Feedback Trends Chart
+    const monthlyData = {{ monthlyFeedbackData|json_encode|raw }};
+    const monthlyCtx = document.getElementById('monthlyFeedbackChart').getContext('2d');
+    new Chart(monthlyCtx, {
+        type: 'line',
+        data: {
+            labels: monthlyData.labels,
+            datasets: [{
+                label: 'Monthly Feedback',
+                data: monthlyData.values,
+                fill: false,
+                borderColor: 'rgba(75, 192, 192, 1)'
+            }]
+        }
+    });
+</script>
+
+<script>
+    // Initialize Equipment by Category Chart
+    const categoryData = {{ categoryData|json_encode|raw }};
+    const categoryCtx = document.getElementById('equipmentByCategoryChart').getContext('2d');
+    new Chart(categoryCtx, {
+        type: 'bar',
+        data: {
+            labels: categoryData.map(data => data.category),
+            datasets: [{
+                label: 'Number of Equipment',
+                data: categoryData.map(data => data.count),
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'backend.html.twig' %}
+
+{% block title %}Equipment{% endblock %}
+
+{% block body %}
+    <h1>Equipment</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ equipment.id }}</td>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <td>{{ equipment.name }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ equipment.description }}</td>
+            </tr>
+            <tr>
+                <th>Image</th>
+                <td>{{ equipment.image }}</td>
+            </tr>
+            <tr>
+                <th>AvailabilityStatus</th>
+                <td>{{ equipment.availabilityStatus }}</td>
+            </tr>
+            <tr>
+                <th>CreatedAt</th>
+                <td>{{ equipment.createdAt ? equipment.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>UpdatedAt</th>
+                <td>{{ equipment.updatedAt ? equipment.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_equipment_index') }}">back to list</a>
+
+    <a href="{{ path('app_equipment_edit', {'id': equipment.id}) }}">edit</a>
+
+    {{ include('equipment/_delete_form.html.twig') }}
+{% endblock %}
