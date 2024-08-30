@@ -7,6 +7,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Validator\Constraints as AppAssert;
+
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 class Category
@@ -30,6 +32,7 @@ class Category
         min: 10,
         minMessage: "The description should be at least {{ limit }} characters long."
     )]
+    #[AppAssert\Profanity]
     private ?string $description = null;
 
     // #[ORM\OneToMany(mappedBy: 'category', targetEntity: Equipment::class)]
